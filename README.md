@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo/black.svg" alt="Beyond the Equation Logo" width="400">
+  <img src="assets/logo_black.svg" alt="Beyond the Equation Logo" width="400">
 </div>
 
 ## 1. Introduction
