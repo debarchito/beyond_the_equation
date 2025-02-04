@@ -11,5 +11,10 @@
   packages = with pkgs; [
     cairo
     pango
+    kdePackages.qtbase
   ];
+  enterShell = ''
+    uv venv
+    uv sync
+  '';
 }
