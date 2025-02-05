@@ -11,7 +11,7 @@
   packages = with pkgs; [
     cairo
     pango
-    kdePackages.qtbase
+    texliveFull
   ];
   enterShell = ''
     uv venv
