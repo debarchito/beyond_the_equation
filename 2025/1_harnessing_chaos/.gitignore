@@ -7,12 +7,3 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
-
-# Others
-.vscode
-.ruff_cache
-.ipynb_checkpoints
-__pycache__
-media
-slides
-videos
