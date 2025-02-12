@@ -1,15 +1,8 @@
 { pkgs, ... }:
 
 {
-  languages.python = {
+  languages.julia = {
     enable = true;
-    package = pkgs.python313;
-    uv.enable = true;
-    uv.sync.enable = true;
-    venv.enable = true;
+    package = pkgs.julia_111;
   };
-  packages = with pkgs; [
-    cairo
-    pango
-  ];
 }
