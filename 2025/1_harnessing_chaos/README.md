@@ -1,8 +1,13 @@
 ## 1. Setup
 
-- If you have [devenv](https://devenv.sh/) and [direnv](https://direnv.net/) configured, you can just run `direnv allow` and the project should scaffold itself with the proper version of [Julia](https://julialang.org/) (which is `1.11.x`).
-- Alternatively, you can use a package manager of your choice or download the binaries from [https://julialang.org/downloads](https://julialang.org/downloads/).
-You can also use [juliaup](https://github.com/JuliaLang/juliaup/) which is a version multiplexer for **Julia**.
+- If you have [direnv](https://direnv.net/) configured, you can just run
+  `direnv allow` and the project should scaffold itself with the proper version
+  of [Julia](https://julialang.org/) (which is `1.11.x`).
+- Alternatively, you can use a package manager of your choice or download the
+  binaries from
+  [https://julialang.org/downloads](https://julialang.org/downloads/). You can
+  also use [juliaup](https://github.com/JuliaLang/juliaup/) which is a version
+  multiplexer for **Julia**.
 
 ## 2. Run
 
@@ -25,7 +30,9 @@ julia> using Pluto
 julia> Pluto.run()
 ```
 
-In the **Pluto** UI, choose the [src/HarnessingChaosPluto.jl](src/HarnessingChaosPluto.jl) file to start the notebook.
+In the **Pluto** UI, choose the
+[src/HarnessingChaosPluto.jl](src/HarnessingChaosPluto.jl) file to start the
+notebook.
 
 ## 3. Licensing
 
