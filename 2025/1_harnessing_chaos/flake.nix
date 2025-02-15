@@ -1,4 +1,5 @@
 {
+  description = "Development shell for HarnessingChaos";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts = {
