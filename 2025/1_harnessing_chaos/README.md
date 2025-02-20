@@ -18,13 +18,13 @@
   (_)     | (_) (_)    |
    _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
   | | | | | | |/ _` |  |
-  | | |_| | | | (_| |  |  Version 1.11.3 (2025-01-21)
+  | | |_| | | | (_| |  |  Version 1.11.x (2025-01-21)
  _/ |\__'_|_|_|\__'_|  |
 |__/                   |
 
 julia> # Tap `]` to enter the package manager
-(@v1.11) pkg> activate .
-(HarnessingChaos) pkg> instantiate
+(@v1.11) pkg> activate . # Activate the env
+(HarnessingChaos) pkg> instantiate # To install Pluto.jl
 (HarnessingChaos) pkg> # Tap `backspace` to exit the package manager
 julia> using Pluto
 julia> Pluto.run()
