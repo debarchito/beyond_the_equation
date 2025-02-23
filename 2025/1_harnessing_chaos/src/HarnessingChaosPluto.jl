@@ -10,6 +10,7 @@ using InteractiveUtils
 		using PlutoUI
 		using Plots
 		using Random
+		using Latexify
 
 		gr()
 
@@ -22,6 +23,22 @@ using InteractiveUtils
 		$(LocalResource(logo_url, :width => 200, :style => "margin-top: 15px"))
 		"""
 	end
+
+# ╔═╡ cfdaf125-80a7-426f-8199-4a9531d5a3a8
+md"""
+# 1.1. What does one mean by something being "deterministic" or "non-deterministic" 🤔?
+#### ...why does the distinction even matter? It's an open-ended question!
+"""
+
+# ╔═╡ 8d30892e-58ec-43c4-bc45-f3313ba6c2d8
+
+	md"""
+	# 1.2. Let's look into an e.g. of two such events and decipher it for ourselves 🥸!
+	"""
+
+
+# ╔═╡ 252c18f2-867b-414c-b643-a96c2a9f192e
+	latexify(:(dy/dx=yx^(1 - y)))
 
 # ╔═╡ 78862a22-4f82-4353-8ffd-69bfa4adeb1e
 md"""
@@ -72,11 +89,13 @@ end
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
+Latexify = "~0.16.6"
 Plots = "~1.40.9"
 PlutoUI = "~0.7.61"
 """
@@ -87,7 +106,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "8b5950465e1c5099123e3a09e32cb0bcf322ee8d"
+project_hash = "1db3af8b947d76bba69e1191024b3d8bd41ecc2d"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1258,7 +1277,10 @@ version = "1.4.1+2"
 
 # ╔═╡ Cell order:
 # ╟─0bae573c-e781-11ef-328f-015b83e4d876
+# ╟─cfdaf125-80a7-426f-8199-4a9531d5a3a8
+# ╠═8d30892e-58ec-43c4-bc45-f3313ba6c2d8
+# ╠═252c18f2-867b-414c-b643-a96c2a9f192e
 # ╟─78862a22-4f82-4353-8ffd-69bfa4adeb1e
-# ╠═538175a5-b73f-4460-97be-b78ea1f0992e
+# ╟─538175a5-b73f-4460-97be-b78ea1f0992e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

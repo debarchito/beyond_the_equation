@@ -26,6 +26,9 @@
               enable = true;
               package = pkgs.julia_111;
             };
+            packages = with pkgs; [
+              just
+            ];
           };
         };
     };
