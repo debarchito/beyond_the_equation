@@ -1,2 +1,6 @@
 default:
     julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); using Pluto; Pluto.run()'
+
+update:
+    nix flake update
+    julia -e 'using Pkg; Pkg.activate("."); Pkg.update();'
