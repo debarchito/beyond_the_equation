@@ -1,13 +1,9 @@
 ## 1. Setup
 
-- If you have [direnv](https://direnv.net/) installed, you can just run
-  `direnv allow` and the project should scaffold itself with the proper version
-  of [Julia](https://julialang.org/) (which is `1.11.x`).
-- Alternatively, you can use a package manager of your choice or download the
-  binaries from
+- You can use a package manager of your choice or download the binaries from
   [https://julialang.org/downloads](https://julialang.org/downloads/).
-- Another option is to use [juliaup](https://github.com/JuliaLang/juliaup/), a version
-  multiplexer for **Julia**. This method is recommended for most users.
+- Another option is to use [juliaup](https://github.com/JuliaLang/juliaup/), a
+  version multiplexer for **Julia**. This method is recommended for most users.
 
 ## 2. Run
 
@@ -17,7 +13,6 @@
 > ```sh
 > just
 > ```
-> For **direnv** users, **just** is installed automatically.
 
 ```sh
 ❯ julia
@@ -38,10 +33,16 @@ julia> using Pluto
 julia> Pluto.run()
 ```
 
-In the **Pluto.jl UI**, select the [src/HarnessingChaosPluto.jl](src/HarnessingChaosPluto.jl) notebook to start working with the interactive environment.
+In the **Pluto.jl UI**, select the
+[src/HarnessingChaosPluto.jl](src/HarnessingChaosPluto.jl) notebook to start
+working with the interactive environment.
 
-Please note that the [src/HarnessingChaos.jl](src/HarnessingChaos.jl) file is intentionally left as an empty module. This is to prevent **Julia** from raising any precompilation errors during initialization.
+Please note that the [src/HarnessingChaos.jl](src/HarnessingChaos.jl) file is
+intentionally left as an empty module. This is to prevent **Julia** from raising
+any precompilation errors during initialization.
 
 ## 3. Licensing
 
-The code samples are licensed under the [MIT](../../LICENSE-MIT) License, while the materials are made available in the public domain under the [CC0 1.0 Universal](../../LICENSE-CC0) license.
+The code samples are licensed under the [MIT](../../LICENSE-MIT) license, while
+the materials are made available in the public domain under the
+[CC0 1.0 Universal](../../LICENSE-CC0) license.
