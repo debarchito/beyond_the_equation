@@ -72,32 +72,39 @@ md"""
 
 # ╔═╡ 6a211811-b04c-4053-99cb-bf9e3e9f8143
 md"""
-Use custom *velocity*: $(@bind cv CheckBox(default=false)) \
+Use *custom velocity*: $(@bind cv CheckBox(default=false)) \
 *velocity factor* =
-$(@bind vf Scrubbable(0:0.1:2, default=1.0)) times.
+$(@bind vf Scrubbable(0:0.1:2, default=1.0)) time(s).
 *custom velocity* =
-$(@bind vc Scrubbable(0:1:40, default=10.0)).
+$(@bind vc Scrubbable(0:1:40, default=10.0)). \
 *altitude* =
 $(@bind al Scrubbable(0:1:20, default=10.0)).
+*inclination (z-axis)* =
+$(@bind z Scrubbable(0.1:0.1:1, default=0.1)). \
+*total frames* =
+$(@bind fr Scrubbable(100:10:2000, default=150)).
+*fps* =
+$(@bind fps Scrubbable(10:10:60, default=30)).
 """
 
 # ╔═╡ 32b5c1c4-4693-4010-b045-a84fe912fed8
 md"""
-Current *velocity*: **$(cv ? vc : vf * sqrt(10.0 * 100.0 / al))** units
+Current *velocity*: **$(cv ? vc : vf * sqrt(10.0 * 100.0 / al))** units. \
+Animation *duration*: **$(fr / fps)** seconds.
 """
 
 # ╔═╡ 718c4447-4595-4a00-b4e2-2abf943a44f4
 begin
     @kwdef struct OrbitSimParams
-        G::Float64 = 10.0
+        G::Float64 = 9.81
         M::Float64 = 100.0
         dt::Float64 = 0.05
-        num_frames::Int = 500
+        num_frames::Int = fr
         altitude::Float64 = al
         velocity::Float64 = cv ? vc : vf * sqrt(G * M / al)
         crash_radius::Float64 = 1.3
         trace_length::Int = 50
-        inclination::Float64 = 0.1
+        inclination::Float64 = z
     end
 
     function orbit_dynamics!(du, u, params::OrbitSimParams, t)
@@ -161,7 +168,7 @@ begin
 			crash && annotate!(x, y, z + 6.0, text("CRASH!", 14, :red, :bold))
         end
 
-        gif(anim, fps=30)
+        gif(anim, fps=fps)
     end
 
     params = OrbitSimParams()
@@ -187,7 +194,15 @@ md"""
 
 # ╔═╡ d9539727-f032-4222-882c-6e9268de8cc2
 md"""
-# e.g. 1.1.b.i. Monte Carlo Serenade: π by chance 🕵️!
+# e.g. 1.1.b.i. Monte Carlo Serenade: Converging to π 🕵️!
+"""
+
+# ╔═╡ ba0e391f-96a5-4337-b6db-000bf6294285
+md"""
+*sample size* =
+$(@bind ss Scrubbable(100:10:2000, default=500)).
+*fps* =
+$(@bind fps2 Scrubbable(10:10:60, default=30)).
 """
 
 # ╔═╡ 23f2b14d-bbc5-444d-ac5d-7a599b74dbd1
@@ -216,13 +231,120 @@ begin
 
         	scatter!(inside_x, inside_y, color=:blue, markersize=2, label="Inside")
         	scatter!(outside_x, outside_y, color=:red, markersize=2, label="Outside")
-        	plot!(cos.(range(0, 2π, length=100)), sin.(range(0, 2π, length=100)), lw=2, color=:black)
+        	plot!(cos.(range(0, 2π, length=100)), sin.(range(0, 2π, length=100)), lw=2, color=:black, label="Circle Boundary")
     	end
 
-    	gif(anim, fps=30)
+    	gif(anim, fps=fps2)
 	end
 
-	monte_carlo_pi(1000)
+	monte_carlo_pi(ss)
+end
+
+# ╔═╡ d4558cdc-af7e-45f0-b40b-b6a979bcadef
+md"""
+# 1.1.c. Chaos
+> "Tiny differences in input could quickly become overwhelming differences in output."\
+> — _**Edward Lorenz**, on chaos theory_
+
+**Chaos** differs from non-determinism in that it is **deterministic yet unpredictable**—meaning that even though the system follows strict rules, its extreme sensitivity to initial conditions makes long-term prediction practically impossible.  
+
+A chaotic system amplifies minuscule differences, leading to wildly **diverging** outcomes that seem random, yet emerge from **underlying order**. It is a dance between determinism and disorder—where **predictability erodes**, but **structure remains**.
+"""
+
+# ╔═╡ fbb35fed-e65c-490c-956c-dce5adc5e8c9
+md"""
+# e.g. 1.1.c.i. Chaos Waltz: The Butterfly’s Tango 🦋!
+"""
+
+# ╔═╡ c5a506a5-8b84-43ed-8346-05edc5483eff
+md"""
+Use *damping force*: $(@bind df CheckBox(default=false)) \
+*fps* =
+$(@bind fps3 Scrubbable(10:10:60, default=20)).
+*duration* =
+$(@bind du Scrubbable(30:10:180, default=30)) seconds.
+"""
+
+# ╔═╡ 3c426b43-db87-4a92-bd93-02823e7c7036
+begin
+
+G = 9.8
+L1 = 1.0
+L2 = 1.0
+L = L1 + L2
+M1 = 1.0
+M2 = 1.0
+t_stop = du
+
+function pendulum!(du, u, p, t)
+    (; M1, M2, L1, L2, G) = p
+
+    du[1] = u[2]
+
+    delta = u[3] - u[1]
+    den1 = (M1 + M2) * L1 - M2 * L1 * cos(delta) * cos(delta)
+    du[2] = (
+        (
+            M2 * L1 * u[2] * u[2] * sin(delta) * cos(delta) +
+            M2 * G * sin(u[3]) * cos(delta) +
+            M2 * L2 * u[4] * u[4] * sin(delta) - (M1 + M2) * G * sin(u[1])
+        ) / den1
+    )
+
+    du[3] = u[4]
+
+    den2 = (L2 / L1) * den1
+    du[4] = (
+        (
+            -M2 * L2 * u[4] * u[4] * sin(delta) * cos(delta) +
+            (M1 + M2) * G * sin(u[1]) * cos(delta) -
+            (M1 + M2) * L1 * u[2] * u[2] * sin(delta) - (M1 + M2) * G * sin(u[3])
+        ) / den2
+    )
+    nothing
+end
+
+th1 = 120.0
+w1 = 0.0
+th2 = -10.0
+w2 = 0.0
+
+p = (; M1, M2, L1, L2, G)
+prob = ODEProblem(pendulum!, deg2rad.([th1, w1, th2, w2]), (0.0, t_stop), p)
+sol = solve(prob, Tsit5())
+
+x1 = +L1 * sin.(sol[1, :])
+y1 = -L1 * cos.(sol[1, :])
+
+x2 = +L2 * sin.(sol[3, :]) + x1
+y2 = -L2 * cos.(sol[3, :]) + y1
+
+anim = @animate for i in eachindex(x2)
+
+    x = [0, x1[i], x2[i]]
+    y = [0, y1[i], y2[i]]
+
+    plot(x, y, legend = false)
+    plot!(xlims = (-2, 2), xticks = -2:0.5:2)
+    plot!(ylims = (-2, 1), yticks = -2:0.5:1)
+    scatter!(x, y)
+
+    x = x2[1:i]
+    y = y2[1:i]
+
+    plot!(x, y, linecolor = :orange)
+    plot!(xlims = (-2, 2), xticks = -2:0.5:2)
+    plot!(ylims = (-2, 1), yticks = -2:0.5:1)
+    scatter!(
+        x,
+        y,
+        color = :orange,
+        markersize = 2,
+        markerstrokewidth = 0,
+        markerstrokecolor = :orange,
+    )
+end
+gif(anim, fps=fps3)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2910,6 +3032,11 @@ version = "1.4.1+2"
 # ╟─1fe50bbc-33db-49fc-918f-6473e2861f03
 # ╟─c6021cc1-ced8-4157-a834-6067e68fa517
 # ╟─d9539727-f032-4222-882c-6e9268de8cc2
+# ╟─ba0e391f-96a5-4337-b6db-000bf6294285
 # ╟─23f2b14d-bbc5-444d-ac5d-7a599b74dbd1
+# ╟─d4558cdc-af7e-45f0-b40b-b6a979bcadef
+# ╟─fbb35fed-e65c-490c-956c-dce5adc5e8c9
+# ╟─c5a506a5-8b84-43ed-8346-05edc5483eff
+# ╟─3c426b43-db87-4a92-bd93-02823e7c7036
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
