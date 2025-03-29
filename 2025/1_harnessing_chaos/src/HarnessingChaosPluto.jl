@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.4
+# v0.20.5
 
 using Markdown
 using InteractiveUtils
@@ -7,7 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     #! format: off
-    quote
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
@@ -17,26 +17,26 @@ macro bind(def, element)
 end
 
 # ╔═╡ 0bae573c-e781-11ef-328f-015b83e4d876
-	begin
-		using Dates
-		using PlutoUI
-		using Plots
-		using Random
-		using Base.Iterators: take
-    	using DataStructures: Deque
-		using LinearAlgebra
-		using OrdinaryDiffEq
+begin
+    using Dates
+    using PlutoUI
+    using Plots
+    using Random
+    using Base.Iterators: take
+    using DataStructures: Deque
+    using LinearAlgebra
+    using OrdinaryDiffEq
 
-		gr()
-		date = today()
-		logo_url = "../../../assets/logo_black.svg"
+    gr()
+    date = today()
+    logo_url = "../../../assets/logo_black.svg"
 
-		md"""
-		# Harnessing Chaos — #1
-		#### $(dayname(date)) — $(monthname(date)) $(day(date)), $(year(date)) 
-		$(LocalResource(logo_url, :width => 200, :style => "margin-top: 15px"))
-		"""
-	end
+    md"""
+    # Harnessing Chaos — #1
+    #### $(dayname(date)) — $(monthname(date)) $(day(date)), $(year(date)) 
+    $(LocalResource(logo_url, :width => 200, :style => "margin-top: 15px"))
+    """
+end
 
 # ╔═╡ cfdaf125-80a7-426f-8199-4a9531d5a3a8
 md"""
@@ -120,17 +120,23 @@ begin
     end
 
     function simulate_orbit(params::OrbitSimParams)
-        u0 = [params.altitude, 0.0, params.altitude * params.inclination, 
-              0.0, params.velocity, params.velocity * params.inclination]
+        u0 = [
+            params.altitude,
+            0.0,
+            params.altitude * params.inclination,
+            0.0,
+            params.velocity,
+            params.velocity * params.inclination,
+        ]
         tspan = (0.0, params.num_frames * params.dt)
         prob = ODEProblem(orbit_dynamics!, u0, tspan, params)
-        sol = solve(prob, Tsit5(), dtmax=params.dt)
+        sol = solve(prob, Tsit5(), dtmax = params.dt)
 
         trace_x, trace_y, trace_z = Deque{Float64}(), Deque{Float64}(), Deque{Float64}()
         crash = false
         crash_position = nothing
 
-        anim = @animate for i in 1:length(sol.t)
+        anim = @animate for i = 1:length(sol.t)
             if crash
                 x, y, z = crash_position
             else
@@ -155,20 +161,59 @@ begin
                 end
             end
 
-            plot(legend=:topright, xlims=(-20, 20), ylims=(-20, 20), zlims=(-20, 20), aspect_ratio=:equal)
+            plot(
+                legend = :topright,
+                xlims = (-20, 20),
+                ylims = (-20, 20),
+                zlims = (-20, 20),
+                aspect_ratio = :equal,
+            )
 
             if crash
-                scatter!([x], [y], [z], markersize=8, color=:red, markerstrokewidth=0, label="Crashed Satellite")
+                scatter!(
+                    [x],
+                    [y],
+                    [z],
+                    markersize = 8,
+                    color = :red,
+                    markerstrokewidth = 0,
+                    label = "Crashed Satellite",
+                )
             else
-                plot!(collect(trace_x), collect(trace_y), collect(trace_z), lw=2, color=:yellow, alpha=0.8, label="Orbit")
-                scatter!([x], [y], [z], markersize=6, color=:red, markerstrokewidth=0, label="Satellite")
+                plot!(
+                    collect(trace_x),
+                    collect(trace_y),
+                    collect(trace_z),
+                    lw = 2,
+                    color = :yellow,
+                    alpha = 0.8,
+                    label = "Orbit",
+                )
+                scatter!(
+                    [x],
+                    [y],
+                    [z],
+                    markersize = 6,
+                    color = :red,
+                    markerstrokewidth = 0,
+                    label = "Satellite",
+                )
             end
 
-            scatter!([0], [0], [0], markersize=15, color=:blue, markerstrokewidth=0, alpha=0.8, label="Planet")
-			crash && annotate!(x, y, z + 6.0, text("CRASH!", 14, :red, :bold))
+            scatter!(
+                [0],
+                [0],
+                [0],
+                markersize = 15,
+                color = :blue,
+                markerstrokewidth = 0,
+                alpha = 0.8,
+                label = "Planet",
+            )
+            crash && annotate!(x, y, z + 6.0, text("CRASH!", 14, :red, :bold))
         end
 
-        gif(anim, fps=fps)
+        gif(anim, fps = fps)
     end
 
     params = OrbitSimParams()
@@ -207,37 +252,48 @@ $(@bind fps2 Scrubbable(10:10:60, default=30)).
 
 # ╔═╡ 23f2b14d-bbc5-444d-ac5d-7a599b74dbd1
 begin
-	function monte_carlo_pi(num_samples)
-    	inside_x, inside_y = Float64[], Float64[]
-    	outside_x, outside_y = Float64[], Float64[]
-    	estimates = Float64[]
+    function monte_carlo_pi(num_samples)
+        inside_x, inside_y = Float64[], Float64[]
+        outside_x, outside_y = Float64[], Float64[]
+        estimates = Float64[]
 
-    	anim = @animate for i in 1:num_samples
-        	x, y = 2 * rand() - 1, 2 * rand() - 1
+        anim = @animate for i = 1:num_samples
+            x, y = 2 * rand() - 1, 2 * rand() - 1
 
-        	if x^2 + y^2 ≤ 1
-            push!(inside_x, x)
-            push!(inside_y, y)
-        	else
-            push!(outside_x, x)
-            push!(outside_y, y)
-        	end
+            if x^2 + y^2 ≤ 1
+                push!(inside_x, x)
+                push!(inside_y, y)
+            else
+                push!(outside_x, x)
+                push!(outside_y, y)
+            end
 
-        	π_estimate = 4 * length(inside_x) / i
-        	push!(estimates, π_estimate)
+            π_estimate = 4 * length(inside_x) / i
+            push!(estimates, π_estimate)
 
-        	plot(aspect_ratio=1, legend=true, xlims=(-1, 1), ylims=(-1, 1),
-             title="π = $(round(π_estimate, digits=5)) (approx.)")
+            plot(
+                aspect_ratio = 1,
+                legend = true,
+                xlims = (-1, 1),
+                ylims = (-1, 1),
+                title = "π = $(round(π_estimate, digits=5)) (approx.)",
+            )
 
-        	scatter!(inside_x, inside_y, color=:blue, markersize=2, label="Inside")
-        	scatter!(outside_x, outside_y, color=:red, markersize=2, label="Outside")
-        	plot!(cos.(range(0, 2π, length=100)), sin.(range(0, 2π, length=100)), lw=2, color=:black, label="Circle Boundary")
-    	end
+            scatter!(inside_x, inside_y, color = :blue, markersize = 2, label = "Inside")
+            scatter!(outside_x, outside_y, color = :red, markersize = 2, label = "Outside")
+            plot!(
+                cos.(range(0, 2π, length = 100)),
+                sin.(range(0, 2π, length = 100)),
+                lw = 2,
+                color = :black,
+                label = "Circle Boundary",
+            )
+        end
 
-    	gif(anim, fps=fps2)
-	end
+        gif(anim, fps = fps2)
+    end
 
-	monte_carlo_pi(ss)
+    monte_carlo_pi(ss)
 end
 
 # ╔═╡ d4558cdc-af7e-45f0-b40b-b6a979bcadef
@@ -268,83 +324,83 @@ $(@bind du Scrubbable(30:10:180, default=30)) seconds.
 # ╔═╡ 3c426b43-db87-4a92-bd93-02823e7c7036
 begin
 
-G = 9.8
-L1 = 1.0
-L2 = 1.0
-L = L1 + L2
-M1 = 1.0
-M2 = 1.0
-t_stop = du
+    G = 9.8
+    L1 = 1.0
+    L2 = 1.0
+    L = L1 + L2
+    M1 = 1.0
+    M2 = 1.0
+    t_stop = du
 
-function pendulum!(du, u, p, t)
-    (; M1, M2, L1, L2, G) = p
+    function pendulum!(du, u, p, t)
+        (; M1, M2, L1, L2, G) = p
 
-    du[1] = u[2]
+        du[1] = u[2]
 
-    delta = u[3] - u[1]
-    den1 = (M1 + M2) * L1 - M2 * L1 * cos(delta) * cos(delta)
-    du[2] = (
-        (
-            M2 * L1 * u[2] * u[2] * sin(delta) * cos(delta) +
-            M2 * G * sin(u[3]) * cos(delta) +
-            M2 * L2 * u[4] * u[4] * sin(delta) - (M1 + M2) * G * sin(u[1])
-        ) / den1
-    )
+        delta = u[3] - u[1]
+        den1 = (M1 + M2) * L1 - M2 * L1 * cos(delta) * cos(delta)
+        du[2] = (
+            (
+                M2 * L1 * u[2] * u[2] * sin(delta) * cos(delta) +
+                M2 * G * sin(u[3]) * cos(delta) +
+                M2 * L2 * u[4] * u[4] * sin(delta) - (M1 + M2) * G * sin(u[1])
+            ) / den1
+        )
 
-    du[3] = u[4]
+        du[3] = u[4]
 
-    den2 = (L2 / L1) * den1
-    du[4] = (
-        (
-            -M2 * L2 * u[4] * u[4] * sin(delta) * cos(delta) +
-            (M1 + M2) * G * sin(u[1]) * cos(delta) -
-            (M1 + M2) * L1 * u[2] * u[2] * sin(delta) - (M1 + M2) * G * sin(u[3])
-        ) / den2
-    )
-    nothing
-end
+        den2 = (L2 / L1) * den1
+        du[4] = (
+            (
+                -M2 * L2 * u[4] * u[4] * sin(delta) * cos(delta) +
+                (M1 + M2) * G * sin(u[1]) * cos(delta) -
+                (M1 + M2) * L1 * u[2] * u[2] * sin(delta) - (M1 + M2) * G * sin(u[3])
+            ) / den2
+        )
+        nothing
+    end
 
-th1 = 120.0
-w1 = 0.0
-th2 = -10.0
-w2 = 0.0
+    th1 = 120.0
+    w1 = 0.0
+    th2 = -10.0
+    w2 = 0.0
 
-p = (; M1, M2, L1, L2, G)
-prob = ODEProblem(pendulum!, deg2rad.([th1, w1, th2, w2]), (0.0, t_stop), p)
-sol = solve(prob, Tsit5())
+    p = (; M1, M2, L1, L2, G)
+    prob = ODEProblem(pendulum!, deg2rad.([th1, w1, th2, w2]), (0.0, t_stop), p)
+    sol = solve(prob, Tsit5())
 
-x1 = +L1 * sin.(sol[1, :])
-y1 = -L1 * cos.(sol[1, :])
+    x1 = +L1 * sin.(sol[1, :])
+    y1 = -L1 * cos.(sol[1, :])
 
-x2 = +L2 * sin.(sol[3, :]) + x1
-y2 = -L2 * cos.(sol[3, :]) + y1
+    x2 = +L2 * sin.(sol[3, :]) + x1
+    y2 = -L2 * cos.(sol[3, :]) + y1
 
-anim = @animate for i in eachindex(x2)
+    anim = @animate for i in eachindex(x2)
 
-    x = [0, x1[i], x2[i]]
-    y = [0, y1[i], y2[i]]
+        x = [0, x1[i], x2[i]]
+        y = [0, y1[i], y2[i]]
 
-    plot(x, y, legend = false)
-    plot!(xlims = (-2, 2), xticks = -2:0.5:2)
-    plot!(ylims = (-2, 1), yticks = -2:0.5:1)
-    scatter!(x, y)
+        plot(x, y, legend = false)
+        plot!(xlims = (-2, 2), xticks = -2:0.5:2)
+        plot!(ylims = (-2, 1), yticks = -2:0.5:1)
+        scatter!(x, y)
 
-    x = x2[1:i]
-    y = y2[1:i]
+        x = x2[1:i]
+        y = y2[1:i]
 
-    plot!(x, y, linecolor = :orange)
-    plot!(xlims = (-2, 2), xticks = -2:0.5:2)
-    plot!(ylims = (-2, 1), yticks = -2:0.5:1)
-    scatter!(
-        x,
-        y,
-        color = :orange,
-        markersize = 2,
-        markerstrokewidth = 0,
-        markerstrokecolor = :orange,
-    )
-end
-gif(anim, fps=fps3)
+        plot!(x, y, linecolor = :orange)
+        plot!(xlims = (-2, 2), xticks = -2:0.5:2)
+        plot!(ylims = (-2, 1), yticks = -2:0.5:1)
+        scatter!(
+            x,
+            y,
+            color = :orange,
+            markersize = 2,
+            markerstrokewidth = 0,
+            markerstrokecolor = :orange,
+        )
+    end
+    gif(anim, fps = fps3)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
